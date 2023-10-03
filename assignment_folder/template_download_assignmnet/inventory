@@ -1,0 +1,26 @@
+all:
+  hosts:
+    node01:
+      ansible_host: 192.168.10.13
+    node02:
+      ansible_host: 192.168.10.14
+    
+  
+  
+  children:
+    webservers:
+      hosts:
+        node01:
+        node02:
+    dbservers:
+      hosts:
+        node03:
+
+    us_east_1:
+      children:
+        webservers:
+        dbservers:
+
+  
+
+        

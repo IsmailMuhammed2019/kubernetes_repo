@@ -1,0 +1,66 @@
+---
+- name: Using Ansible to configure Nginx webserver
+  hosts: node04
+  become: yes
+  
+  tasks:
+    - name: update cache of apt 
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: latest
+
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Create foo directory
+      file:
+        path: /tmp/foo
+        state: directory
+        mode: '0755'
+
+    - name: Copy contents static web contents to foo directory
+      copy:
+        src: /vagrant/static-site-src
+        dest: /tmp/foo
+        remote_src: yes
+
+    - name: Copy static site config file to foo directory
+      copy:
+        src: /vagrant/static_site.cfg
+        dest: /tmp/foo
+        remote_src: yes
+
+
+    - name: Copy nginx config file to nginx sites-available directory
+      copy:
+        src: /tmp/foo/static_site.cfg
+        dest: /etc/nginx/sites-available/
+        remote_src: yes
+
+    - name: Touch the same file, but add some permissions
+      file:
+        path: /etc/nginx/sites-available/static_site.cfg
+        mode: u+rwx,g+wx,o+rwx
+
+    - name: Create symlink
+      shell: ln -sf  /etc/nginx/sites-available/static_site.cfg  /etc/nginx/sites-enabled/default       
+
+    - name: Copy nginx config file to nginx sites-available directory
+      shell: sudo mv /tmp/foo/static-site-src /tmp/foo/static-site
+    
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes
+
+
+
+    

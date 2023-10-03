@@ -1,0 +1,17 @@
+---
+- name: Transfer webfiles to webservers
+  hosts: webservers
+  
+  tasks:
+  - name: Find files you want to move
+    ansible.builtin.find:
+      paths: C:/Users/Victor/Downloads/2121_wave_cafe/2121_wave_cafe
+      file_type: file
+      excludes: "*.txt" 
+    register: files_output
+
+  - name: Copy the files
+    ansible.builtin.copy:
+      src: "{{ item.path }}"
+      dest: /02/webfiles/
+    loop: "{{ files_output.files }}"

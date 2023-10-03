@@ -1,0 +1,22 @@
+---
+
+- name: Websetup
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: setting up httpd
+      yum:
+        name: httpd
+        state: present
+    - name: enabling httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes        
+
+    - name: Synchronize my local machine with remote machines
+      ansible.posix.synchronize:
+        src:  02/webfiles/
+        dest: /var/www/html/
+        recursive: true

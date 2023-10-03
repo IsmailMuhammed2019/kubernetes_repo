@@ -1,0 +1,12 @@
+#To install httpd on webservers
+ansible -m ansible.builtin.yum -a "name=httpd state=present" -i inventory webservers --become
+
+#To Restart httpd service and enable httpd service
+ansible -m ansible.builtin.service -a "name=httpd state=restarted enabled=yes" -i inventory webservers --become
+
+#To delete httpd
+ansible -m ansible.builtin.yum -a "name=httpd state=absent" -i inventory webservers --become
+
+
+#To copy index.html to server after installing httpd
+ansible webservers -m ansible.builtin.copy -a "src=index.html dest=/var/www/html/index" -i inventory --become

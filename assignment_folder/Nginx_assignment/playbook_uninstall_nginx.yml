@@ -1,0 +1,22 @@
+---
+- name: Playbook to stop Nginx service and uninstall it
+  hosts: node04
+
+  tasks:
+    - name: Stop nginx service
+      service:
+        name: nginx
+        state: stopped
+
+    - name: Uninstall nginx service
+      apt:
+        name: nginx
+        state: absent
+
+    - name: Remove foo directory
+      shell: rm -rf /tmp/foo
+
+    # - name: Remove foo directory
+    #   shell: rm -rf /etc/nginx
+
+
