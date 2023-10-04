@@ -1,0 +1,10 @@
+---
+- name: Transfer webfiles to webservers
+  hosts: webservers
+
+  tasks:
+  - name: Synchronization of src on the control machine to dest on the remote hosts
+    ansible.posix.synchronize:
+      src: 02/webfiles/
+      dest: /var/www/html/
+      recursive: true

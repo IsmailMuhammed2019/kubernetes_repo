@@ -1,0 +1,87 @@
+---
+- name: Using Ansible to configure Nginx webserver
+  hosts: node04
+  become: yes
+  vars:
+    URL1: 'https://www.tooplate.com/zip-templates/2098_health.zip'
+    ART_NAME1: '2098_health'   
+    ART_DIR1: /tmp/foo/2098_health/   
+    TEMPDIR: "/tmp/foo/"
+    TEMPDIR2: "/tmp/foo/dynamic-site/"
+   
+  
+  tasks:
+    - name: update cache of apt 
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: latest
+
+    - name: Install Unzip
+      apt:
+        name: unzip
+        state: present
+
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+      
+
+    - name: Create foo directory
+      file:
+        path: /tmp/foo
+        state: directory
+        mode: '0755'
+
+    - name: Download the template on node04
+      get_url:
+        url: "{{URL1}}"
+        dest: /tmp/foo/"{{ART_NAME1}}".zip
+        mode: '0755'
+
+    - name: Unzip the downloaded template on node04
+      unarchive:
+        src: /tmp/foo/"{{ART_NAME1}}".zip
+        dest: "{{TEMPDIR}}"
+        remote_src: yes
+
+    - name: Copy the contents to dynamic-site directory on node04
+      copy:
+        src: "{{ART_DIR1}}"
+        dest: "{{TEMPDIR2}}"
+        remote_src: yes
+      
+    - name: Copy dynamic site config file to foo directory
+      copy:
+        src: /vagrant/dynamic_site.cfg
+        dest: /tmp/foo
+        remote_src: yes  
+
+    - name: Copy nginx config file to nginx sites-available directory
+      copy:
+        src: /tmp/foo/dynamic_site.cfg
+        dest: /etc/nginx/sites-available/
+        remote_src: yes
+
+    - name: Touch the same file, but add some permissions
+      file:
+        path: /etc/nginx/sites-available/dynamic_site.cfg
+        mode: u+rwx,g+wx,o+rwx
+
+    - name: Create symlink
+      shell: ln -sf  /etc/nginx/sites-available/dynamic_site.cfg  /etc/nginx/sites-enabled/default       
+      
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes
+
+
+
+    

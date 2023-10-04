@@ -1,0 +1,41 @@
+---
+- name: Remove webfiles from webservers
+  hosts: all
+
+  tasks:
+    - name: Delete files in html folder for all nodes
+      ansible.builtin.shell: rm -rf /var/www/html/*
+
+    - name: Delete webfiles folder in tmp directory for all nodes
+      ansible.builtin.shell: rm -rf /tmp/webfiles
+      
+
+# - name:
+#   hosts: node01
+
+#   tasks:
+#     - name: Delete artifact folder for node01
+#       ansible.builtin.file:
+#         path: /tmp/webfiles
+#         state: absent
+#         remote_src: yes
+       
+# - name:
+#   hosts: node02
+  
+#   tasks:
+#     - name: Delete artifact folder for node02
+#       ansible.builtin.file:
+#         path: /tmp/webfiles
+#         state: absent   
+#         remote_src: yes     
+
+# - name:
+#   hosts: node03
+  
+#   tasks:
+#     - name: Delete artifact folder for node03
+#       ansible.builtin.file:
+#         path: /tmp/webfiles
+#         state: absent   
+#         remote_src: yes    

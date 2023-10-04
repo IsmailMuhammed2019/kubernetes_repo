@@ -1,0 +1,62 @@
+---
+- name: Deployment of website template artificats to 2nd server
+  hosts: node02
+  vars:
+    
+    dirname1: /root/artifact2_folder
+    url_link: https://www.tooplate.com/download/2109_the_card
+    zipname: /root/artifact2_folder/2109_the_card.zip
+    
+  tasks:
+ 
+    - name: Create 1st directory to store 2nd downloaded artifiact
+      ansible.builtin.file:
+        path: "{{dirname1}}"
+        state: directory
+        mode: '0755'
+          
+        
+    - name: Download 2nd artificat from tooplate
+      get_url:
+        url: "{{url_link}}"
+        dest: "{{dirname1}}"
+
+    - name: Install unzip
+      yum:
+        name: unzip
+        state: present
+    
+    - name: Install httpd
+      yum:
+        name: httpd
+        state: present
+
+    - name: start and enable httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+
+    - name: Unzip 2nd downloaded artifiact
+      unarchive:
+        src: "{{zipname}}"
+        dest: "{{dirname1}}"
+        remote_src: yes
+
+
+- name: Copy task_2
+  hosts: node02
+  vars:
+    dirname2: /root/artifact2_folder/2109_the_card/
+  
+
+  tasks:
+    - name: Copy unzipped 2nd artifact to html directory
+      ansible.builtin.copy:
+        src: "{{dirname2}}"
+        dest: /var/www/html/
+        owner: root
+        group: root
+        mode: '0755'
+        remote_src: yes

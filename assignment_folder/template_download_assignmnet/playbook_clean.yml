@@ -1,0 +1,11 @@
+---
+- name: Remove webfiles from webservers
+  hosts: webservers
+
+  tasks:
+  - name: Synchronize and delete files in dest on the remote host that are not found in src of localhost.
+    ansible.posix.synchronize:
+      src: 02/webfiles/
+      dest: /var/www/html/
+      delete: true 
+      recursive: true

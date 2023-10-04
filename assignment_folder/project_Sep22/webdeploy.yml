@@ -1,0 +1,168 @@
+---
+- name:
+  hosts: all
+  become: yes
+  vars:
+    URL1: 'https://www.tooplate.com/zip-templates/2098_health.zip'
+    URL2: 'https://www.tooplate.com/zip-templates/2131_wedding_lite.zip'
+    URL3: 'https://www.tooplate.com/zip-templates/2130_waso_strategy.zip'
+    ART_NAME1: '2098_health'   
+    ART_NAME2: '2131_wedding_lite'
+    ART_NAME3: '2130_waso_strategy'
+    ART_DIR1: /tmp/webfiles/2098_health/   
+    ART_DIR2: /tmp/webfiles/2131_wedding_lite/
+    ART_DIR3: /tmp/webfiles/2130_waso_strategy/
+    TEMPDIR: "/tmp/webfiles"
+    DESTINATION: "/var/www/html"
+
+  tasks:
+    - name: Create temp directory in all remote nodes
+      file:
+        path: "{{TEMPDIR}}"
+        state: directory
+
+    - name: Update package manager
+      apt:
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Setup webservers by initializing httpd, wget, zip, unzip on CentOS
+      yum:
+        name: "{{item}}"
+        state: present
+      when: ansible_distribution == "CentOS"
+      loop:
+        - httpd
+        - wget
+        - zip
+        - unzip
+
+    - name: Restart and enable webserver
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+      notify: httpd_restarted
+
+    - name:  Setup webservers by initializing apache2, wget, zip, unzip on Ubuntu
+      apt:
+        name: "{{item}}"
+        state: present
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - apache2
+        - wget
+        - zip
+        - unzip
+
+    - name: Restart and enable webserver
+      service:
+        name: apache2
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+      notify: apache2_restarted
+
+    - name: Download the template on node01
+      get_url:
+        url: "{{URL1}}"
+        dest: /tmp/webfiles/"{{ART_NAME1}}".zip
+        mode: '0644'
+      when: ansible_hostname == "node01"
+
+    - name: Download the template on node02
+      get_url:
+        url: "{{URL2}}"
+        dest: /tmp/webfiles/"{{ART_NAME2}}".zip
+        mode: '0644'
+      when: ansible_hostname == "node02"
+      
+    - name: Download the template on node03
+      get_url:
+        url: "{{URL3}}"
+        dest: /tmp/webfiles/"{{ART_NAME3}}".zip
+        mode: '0644'
+      when: ansible_hostname == "node03"
+
+    - name: Unzip the downloaded template on node01
+      unarchive:
+        src: /tmp/webfiles/"{{ART_NAME1}}".zip
+        dest: "{{TEMPDIR}}"
+        remote_src: yes
+      when: ansible_hostname == "node01"
+      register: unzip_result1
+
+    - name: Unzip the downloaded template on node02
+      unarchive:
+        src: /tmp/webfiles/"{{ART_NAME2}}".zip
+        dest: "{{TEMPDIR}}"
+        remote_src: yes
+      when: ansible_hostname == "node02"
+      register: unzip_result2
+
+    - name: Unzip the downloaded template on node03
+      unarchive:
+        src: /tmp/webfiles/"{{ART_NAME3}}".zip
+        dest: "{{TEMPDIR}}"
+        remote_src: yes
+      when: ansible_hostname == "node03"
+      register: unzip_result3
+
+    - name: Copy the contents to html directory on node01
+      copy:
+        src: "{{ART_DIR1}}"
+        dest: /var/www/html/
+        remote_src: yes
+      when: ansible_hostname == "node01"
+        # - unzip_result1.changed 
+        
+
+    - name: Copy the contents to html directory on node02
+      copy:
+        src: "{{ART_DIR2}}"
+        dest: /var/www/html/
+        remote_src: yes
+      when: ansible_hostname == "node02"
+        # - unzip_result2.changed
+      
+
+    - name: Copy the contents to html directory on node03
+      copy:
+        src: "{{ART_DIR3}}"
+        dest: /var/www/html/
+        remote_src: yes
+      when: ansible_hostname == "node03"
+        # - unzip_result3.changed
+        
+
+  handlers:
+    - name: httpd_restarted
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: apache2_restarted
+      service:
+        name: apache2
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

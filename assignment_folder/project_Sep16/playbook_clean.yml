@@ -1,0 +1,30 @@
+---
+- name: Remove webfiles from webservers
+  hosts: dbservers
+
+  tasks:
+    - name: Delete files in html folder for node01
+      ansible.builtin.file:
+        path: /var/www/html/
+        state: absent
+        remote_src: yes
+
+- name:
+  hosts: node01
+
+  tasks:
+    - name: Delete artifact folder for node01
+      ansible.builtin.file:
+        path: /root/artifact1_folder
+        state: absent
+        remote_src: yes
+       
+- name:
+  hosts: node02
+  
+  tasks:
+    - name: Delete artifact folder for node02
+      ansible.builtin.file:
+        path: /root/artifact2_folder
+        state: absent   
+        remote_src: yes     
