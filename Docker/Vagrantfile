@@ -1,0 +1,44 @@
+Vagrant.configure("2") do |config|
+
+    config.vm.define "control" do |control|
+        control.vm.box = "ubuntu/bionic64"
+        control.vm.network "private_network", ip: "192.168.10.12"
+        control.vm.hostname = "control"
+        control.vm.synced_folder "C:/Users/charm/Downloads/kubernetes_repo", "/vagrant_data"
+        control.vm.provider "virtualbox" do |vb|
+            vb.memory = "3004"
+            vb.cpus = "2"
+            vb.name = "control"
+        end
+    end
+
+    # config.vm.define "node01" do |node01|
+    #     node01.vm.box = "geerlingguy/centos7"
+    #     node01.vm.network "private_network", ip: "192.168.10.13"
+    #     node01.vm.hostname = "node01"
+    #     node01.vm.provider "virtualbox" do |vb|
+    #         vb.name = "node01"
+    #         vb.memory = "2048"
+    #     end
+    # end
+    
+    config.vm.define "node02" do |node02|
+        node02.vm.box = "ubuntu/bionic64"
+        node02.vm.network "private_network", ip: "192.168.10.14"
+        node02.vm.hostname = "node02"
+        node02.vm.provider "virtualbox" do |vb|
+            vb.name = "node02"
+            vb.memory = "2048"
+        end
+    end
+
+    # config.vm.define "node03" do |node03|
+    #     node03.vm.box = "geerlingguy/centos7"
+    #     node03.vm.network "private_network", ip: "192.168.10.15"
+    #     node03.vm.hostname = "node03"
+    #     node03.vm.provider "virtualbox" do |vb|
+    #         vb.name = "node03"
+    #         vb.memory = "2048"
+    #     end
+    # end
+end
