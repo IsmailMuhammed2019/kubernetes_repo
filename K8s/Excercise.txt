@@ -1,0 +1,6 @@
+Excercise
+1. Create a docker image with static web files from tooplate.com (you can pick any template)
+2. push your created image to docker hub
+3. Create a k8s cluster with minikube
+4. create a deployment with 5 replica sets
+5. create a service to expose your application with port 30100
