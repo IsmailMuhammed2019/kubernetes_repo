@@ -116,3 +116,6 @@ https://docs.docker.com/desktop/install/ubuntu/
 
 Post Installation instruction
 https://docs.docker.com/engine/install/linux-postinstall/
+
+
+minikube start --driver=virtualbox --no-vtx-check --image-repository=auto
