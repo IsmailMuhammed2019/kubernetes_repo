@@ -1,0 +1,118 @@
+1. pods
+2. deployments
+3. services
+4. secrets
+5. configmap
+6. monitoring (prometheus and grafana)
+7. namespace
+
+
+
+minikube start --driver=virtualbox --no-vtx-check --image-repository=auto
+
+choco install kubernetes-helm
+
+kubectl create namespace production
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm repo update
+
+helm install prometheus prometheus-community/prometheus --namespace monitoring
+
+helm repo add grafana https://grafana.github.io/helm-charts
+
+helm install grafana grafana/grafana --namespace monitoring
+
+helm search repo prometheus-community
+
+
+kubectl port-forward -n monitoring prometheus-server-0 9090:9090
+
+helm list -n monitoring
+
+kubectl port-forward -n monitoring <grafana-pod-name> 3000:3000
+
+
+
+
+minikube addons enable metrics-server
+
+
+
+Install Minikube:
+
+Download and install Minikube from the official website: https://minikube.sigs.k8s.io/docs/start/
+Make sure you have a hypervisor installed, such as Hyper-V or VirtualBox.
+Start Minikube:
+
+Open a command prompt and run:
+sql
+Copy code
+minikube start --vm-driver hyperv
+Enable Metrics Server:
+
+Metrics Server is required for Kubernetes to collect resource usage data. Run the following command:
+bash
+Copy code
+minikube addons enable metrics-server
+Install Prometheus:
+
+Create a file named prometheus-config.yaml with the following content:
+yaml
+Copy code
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-server-conf
+  labels:
+    name: prometheus-server-conf
+data:
+  prometheus.yml: |-
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      - job_name: 'kubernetes-apiservers'
+        kubernetes_sd_configs:
+          - role: 'endpoints'
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+Apply the configuration:
+lua
+Copy code
+kubectl create -f prometheus-config.yaml
+Install Prometheus using Helm:
+arduino
+Copy code
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/prometheus -f prometheus-config.yaml
+Install Grafana:
+
+Install Grafana using Helm:
+bash
+Copy code
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install grafana grafana/grafana
+Access Grafana Dashboard:
+
+Get the Grafana pod name:
+arduino
+Copy code
+kubectl get pods -l app.kubernetes.io/name=grafana -o jsonpath="{.items[0].metadata.name}"
+Port forward to the Grafana pod:
+php
+Copy code
+kubectl port-forward <grafana-pod-name> 3000:3000
+Open your web browser and go to http://localhost:3000. Log in with the default credentials (admin/admin).
+Configure Grafana Data Source:
+
+Add Prometheus as a data source in Grafana using the URL http://prometheus-server.
+Import Prometheus Dashboard:
+Import the default Prometheus dashboard for Kubernetes. The ID is 315 in the Grafana dashboard settings.
+
+Import the default Prometheus dashboard for Kubernetes. The ID is 315 in the Grafana dashboard settings.
