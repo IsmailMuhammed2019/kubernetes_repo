@@ -61,6 +61,7 @@ Install Prometheus:
 Create a file named prometheus-config.yaml with the following content:
 yaml
 Copy code
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -80,6 +81,7 @@ data:
         tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        
 Apply the configuration:
 lua
 Copy code
