@@ -5,3 +5,4 @@
 *.tfstate.backup
 terraform-provider-aws_v5.25.0_x5
 *.tfstate
+.terraform
