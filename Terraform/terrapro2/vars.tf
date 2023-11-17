@@ -13,3 +13,7 @@ variable "AMIS" {
     us-west-1 = "ami-06e4ca05d431835e9"
   }
 }
+
+variable "KEYS" {
+    default = "kops-key"
+}
