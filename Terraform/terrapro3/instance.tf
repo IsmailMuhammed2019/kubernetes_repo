@@ -19,8 +19,9 @@ resource "aws_instance" "websetup" {
   }
 
   provisioner "remote-exec" {
+
     inline = [
-      "chmod +x /tmp/app.sh",
+      "chmod u+x /tmp/app.sh",
       "sudo /tmp/app.sh"
     ]
   }
