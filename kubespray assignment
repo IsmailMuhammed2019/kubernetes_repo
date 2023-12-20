@@ -1,0 +1,30 @@
+How to manage the cluster
+- Getting node information
+- Deploy applicaiton 
+- Checking application states
+- confirming application status
+
+1 control-node
+2 worker-nodes
+
+
+Deploy Static Application on Cluster
+- Deployment
+ * Image
+ * Port
+ * name
+ * label
+ * selector
+
+- Service
+ * port
+
+
+Assignmet
+1. Deploy separate application on each worker nodes
+  - node1 seperate application
+  - node2 seperate appliation 
+
+2. Modify the cluster
+ - Delete a worker node
+ - Add the delete node to the control node ( 2 control nodes and 1 worker nodes)
